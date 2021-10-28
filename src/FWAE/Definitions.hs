@@ -12,10 +12,10 @@ data FWAE = ID   {name :: String}
           | App  {expr1 :: FWAE, expr2 :: FWAE}
 
 instance Show FWAE where
-  show (ID v) = v
-  show (Num n) = show n
-  show (Add l r) = "{+ " ++ show l ++ " " ++ show r ++ "}"
-  show (Sub l r) = "{- " ++ show l ++ " " ++ show r ++ "}"
+  show (ID v)      = v
+  show (Num n)     = show n
+  show (Add l r)   = "{+ " ++ show l ++ " " ++ show r ++ "}"
+  show (Sub l r)   = "{- " ++ show l ++ " " ++ show r ++ "}"
   show (With wID wVal wBody) = concat ["{with {", wID, " ", show wVal, "} ", show wBody, "}"]
-  show (Fun p e) = concat ["{fun (", p, ") ", show e, "}"]
-  show (App e1 e2) = concat ["app {", show e1, " ", show e2, "}"]
+  show (Fun p e)   = concat ["{fun {", p, "} ", show e, "}"]
+  show (App e1 e2) = concat ["{", show e1, " ", show e2, "}"]

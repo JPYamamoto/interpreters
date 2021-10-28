@@ -31,7 +31,7 @@ sub = do
   return $ Sub e1 e2
 
 with :: Parser WAE
-with = do
+with = try $ do
   string "with"
   spaces
   (wvar, wval) <- bind
@@ -58,10 +58,11 @@ parenthesis p = do
   return e
 
 expression :: Parser WAE
-expression = spaces *> (num <|> idVar <|> parenthesis recursiveExpression) <* spaces
+expression = spaces *> expressions <* spaces
+  where expressions = parenthesis recursiveExpression <|> num <|> idVar
 
 recursiveExpression :: Parser WAE
-recursiveExpression = with <|> add <|> sub
+recursiveExpression = add <|> sub <|> with
 
 waeProgram :: Parser WAE
 waeProgram = do

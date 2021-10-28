@@ -10,8 +10,8 @@ data WAE = ID   {name :: String}
          | With {idName :: String, idValue :: WAE, body :: WAE}
 
 instance Show WAE where
-  show (ID v) = v
-  show (Num n) = show n
+  show (ID v)    = v
+  show (Num n)   = show n
   show (Add l r) = "{+ " ++ show l ++ " " ++ show r ++ "}"
   show (Sub l r) = "{- " ++ show l ++ " " ++ show r ++ "}"
-  show (With vID vVal vBody) = concat ["{with {", vID, " ", show vVal, "} ", show vBody, "}"]
+  show (With wID wVal wBody) = concat ["{with {", wID, " ", show wVal, "} ", show wBody, "}"]
