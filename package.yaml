@@ -1,0 +1,49 @@
+name:                ldp
+version:             0.1.0.0
+github:              "JPYamamoto/ldp"
+license:             MIT
+author:              "Juan Pablo Yamamoto"
+maintainer:          "jpyamamoto@ciencias.unam.mx"
+copyright:           "2021 Juan Pablo Yamamoto"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Prácticas de Programación para el curso de Lenguajes de Programación.
+# category:            Programming Languages
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/JPYamamoto/ldp#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- parsec >= 3.1
+
+library:
+  source-dirs: src
+
+executables:
+  ldp-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - ldp
+
+tests:
+  ldp-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - ldp

@@ -1,0 +1,70 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           ldp
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/JPYamamoto/ldp#readme>
+homepage:       https://github.com/JPYamamoto/ldp#readme
+bug-reports:    https://github.com/JPYamamoto/ldp/issues
+author:         Juan Pablo Yamamoto
+maintainer:     jpyamamoto@ciencias.unam.mx
+copyright:      2021 Juan Pablo Yamamoto
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/JPYamamoto/ldp
+
+library
+  exposed-modules:
+      AE
+      AE.Definitions
+      AE.Interpreter
+      AE.Parser
+      WAE
+      WAE.Definitions
+      WAE.Interpreter
+      WAE.Parser
+  other-modules:
+      Paths_ldp
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , parsec >=3.1
+  default-language: Haskell2010
+
+executable ldp-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_ldp
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , ldp
+    , parsec >=3.1
+  default-language: Haskell2010
+
+test-suite ldp-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_ldp
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , ldp
+    , parsec >=3.1
+  default-language: Haskell2010
