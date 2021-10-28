@@ -6,7 +6,8 @@ Ejercicio de programación para la clase de Lenguajes de Programación.
 Los siguientes son los intérpretes implementados hasta ahora:
 
 - AE: Expresiones aritméticas.
-- WAE: Expresiones aritméticas, expresiones `with`.
+- WAE: Expresiones `with`.
+- FWAE: Funciones con cerraduras y alcance estático.
 
 ## Uso
 El proyecto utiliza la herramienta Stack para manejo de bibliotecas en Haskell.
