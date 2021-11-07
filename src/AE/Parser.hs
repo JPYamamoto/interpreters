@@ -6,24 +6,30 @@ import Text.Parsec.String
 
 import AE.Definitions
 
+integer :: Parser String
+integer = positive <|> negative <|> digits
+  where digits = many1 digit
+        positive = char '+' *> digits
+        negative = (:) <$> char '-' <*> digits
+
+float :: Parser String
+float = (++) <$> integer <*> decimal
+  where decimal = option "" $ (:) <$> char '.' <*> integer
+
 num :: Parser AE
-num = do
-  n <- many1 digit
-  return $ Num (read n :: Double)
+num = float >>= (return . Num . read)
 
 add :: Parser AE
 add = do
   char '+'
   e1 <- expression
-  e2 <- expression
-  return $ Add e1 e2
+  Add e1 <$> expression
 
 sub :: Parser AE
 sub = do
   char '-'
   e1 <- expression
-  e2 <- expression
-  return $ Sub e1 e2
+  Sub e1 <$> expression
 
 parenthesis :: Parser AE -> Parser AE
 parenthesis p = do

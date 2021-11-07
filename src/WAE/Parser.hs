@@ -11,10 +11,18 @@ idVar = do
   word <- many1 letter
   return $ ID word
 
+integer :: Parser String
+integer = positive <|> negative <|> digits
+  where digits = many1 digit
+        positive = char '+' *> digits
+        negative = (:) <$> char '-' <*> digits
+
+float :: Parser String
+float = (++) <$> integer <*> decimal
+  where decimal = option "" $ (:) <$> char '.' <*> integer
+
 num :: Parser WAE
-num = do
-  n <- many1 digit
-  return $ Num (read n :: Double)
+num = float >>= (return . Num . read)
 
 add :: Parser WAE
 add = do

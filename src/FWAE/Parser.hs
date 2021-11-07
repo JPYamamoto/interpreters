@@ -14,24 +14,30 @@ idVar = do
   varname <- word
   return $ ID varname
 
+integer :: Parser String
+integer = positive <|> negative <|> digits
+  where digits = many1 digit
+        positive = char '+' *> digits
+        negative = (:) <$> char '-' <*> digits
+
+float :: Parser String
+float = (++) <$> integer <*> decimal
+  where decimal = option "" $ (:) <$> char '.' <*> integer
+
 num :: Parser FWAE
-num = do
-  n <- many1 digit
-  return $ Num (read n :: Double)
+num = float >>= (return . Num . read)
 
 add :: Parser FWAE
 add = do
   char '+'
   e1 <- expression
-  e2 <- expression
-  return $ Add e1 e2
+  Add e1 <$> expression
 
 sub :: Parser FWAE
 sub = do
   char '-'
   e1 <- expression
-  e2 <- expression
-  return $ Sub e1 e2
+  Sub e1 <$> expression
 
 with :: Parser FWAE
 with = try $ do
@@ -39,15 +45,14 @@ with = try $ do
   spaces
   (wvar, wval) <- parenthesis bind
   spaces
-  wbody <- expression
-  return $ With wvar wval wbody
+  With wvar wval <$> expression
 
 bind :: Parser (String, FWAE)
 bind = do
   wvar <- word
   spaces
   wval <- expression
-  return $ (wvar, wval)
+  return (wvar, wval)
 
 fun :: Parser FWAE
 fun = try $ do
@@ -55,15 +60,13 @@ fun = try $ do
   spaces
   fparam <- parenthesis word
   spaces
-  fbody <- expression
-  return $ Fun fparam fbody
+  Fun fparam <$> expression
 
 app :: Parser FWAE
 app = do
   e1 <- expression
   spaces
-  e2 <- expression
-  return $ App e1 e2
+  App e1 <$> expression
 
 parenthesis :: Parser a -> Parser a
 parenthesis p = do
