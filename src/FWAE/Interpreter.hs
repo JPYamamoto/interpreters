@@ -1,51 +1,50 @@
-module FWAE.Interpreter (interp) where
+module FWAE.Interpreter (interp, desugar) where
 
 import FWAE.Definitions
-import Data.Maybe
-import Data.Either
-
-type FAEResult = Either Closure Number
-type Env = [(String, FAEResult)]
-data Closure = Closure {cparam :: String, cbody :: FWAE, env :: Env}
-
-instance Show Closure where
-  show (Closure p b _) = show $ Fun p b
 
 -- Semantic Analysis
-interp :: FWAE -> Maybe FAEResult
+
+-- Interpreter
+interp :: SFWAE -> Maybe FAEResult
 interp asa = interpExpr [] (desugar asa)
 
 interpExpr :: Env -> FWAE -> Maybe FAEResult
-interpExpr e (ID v)    = lookup v e
-interpExpr _ (Num n)   = return $ Right n
-interpExpr e (Add l r) = do
-  lresult <- interpExpr e l
-  rresult <- interpExpr e r
-  interpOp (+) lresult rresult
-interpExpr e (Sub l r) = do
-  lresult <- interpExpr e l
-  rresult <- interpExpr e r
-  interpOp (-) lresult rresult
-interpExpr e (Fun p e1)  = (return . Left) $ Closure p e1 e
-interpExpr e (App e1 e2) = do
+interpExpr e (ID v)       = lookup v e
+interpExpr _ (Num n)      = return $ Right n
+interpExpr e (Op op exps) = do
+  expsResults <- mapM (interpExpr e) exps
+  return $ do
+    result <- sequence expsResults
+    return (operatorFun op result)
+interpExpr e (Fun p body) = (return . Left) $ Closure p body e
+interpExpr e (App e1 e2)  = do
   f <- interpExpr e e1
   x <- interpExpr e e2
   interpApp f x
-interpExpr _ _ = error "Unreachable Statement"
-
-interpOp :: (Number -> Number -> Number) -> FAEResult -> FAEResult -> Maybe FAEResult
-interpOp f (Right l) (Right r) = (return . return) $ f l r
-interpOp _ _         _         = Nothing
 
 interpApp :: FAEResult -> FAEResult -> Maybe FAEResult
-interpApp (Left closure) arg = interpExpr ((cparam closure, arg):env closure) (cbody closure)
+interpApp (Left closure) arg = interpExpr ((cparam closure, arg):cenv closure) (cbody closure)
 interpApp _              _   = Nothing
 
-desugar :: FWAE -> FWAE
-desugar e@(ID _)    = e
-desugar e@(Num _)   = e
-desugar (Add l r)   = Add (desugar l) (desugar r)
-desugar (Sub l r)   = Sub (desugar l) (desugar r)
-desugar (With wID wVal wBody) = desugar $ App (Fun wID wBody) wVal
-desugar (Fun p e)   = Fun p (desugar e)
-desugar (App e1 e2) = App (desugar e1) (desugar e2)
+-- Desugar
+desugar :: SFWAE -> FWAE
+desugar (SID i)     = ID i
+desugar (SNum n)    = Num n
+desugar (SOp f exprs) = Op f $ map desugar exprs
+desugar (SWith bs body)  = desugar $ withToApp bs body
+desugar (SMWith bs body) = desugar $ mwithToWith bs body
+desugar (SFun ps e)   = desugarFun ps (desugar e)
+desugar (SApp e args) = desugarApp (desugar e) (map desugar args)
+
+withToApp :: [SBinding] -> SFWAE -> SFWAE
+withToApp bs body = let (ids, vals) = unzip bs
+                    in SApp (SFun ids body) vals
+
+mwithToWith :: [SBinding] -> SFWAE -> SFWAE
+mwithToWith bs body = foldr (\b -> SWith [b]) body bs
+
+desugarFun :: [String] -> FWAE -> FWAE
+desugarFun ps body = foldr Fun body ps
+
+desugarApp :: FWAE -> [FWAE] -> FWAE
+desugarApp = foldl App

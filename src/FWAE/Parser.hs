@@ -6,13 +6,12 @@ import Text.Parsec.String
 
 import FWAE.Definitions
 
-word :: Parser String
-word = many1 letter
+-- Primitives
 
-idVar :: Parser FWAE
+idVar :: Parser SFWAE
 idVar = do
   varname <- word
-  return $ ID varname
+  return $ SID varname
 
 integer :: Parser String
 integer = positive <|> negative <|> digits
@@ -24,49 +23,110 @@ float :: Parser String
 float = (++) <$> integer <*> decimal
   where decimal = option "" $ (:) <$> char '.' <*> integer
 
-num :: Parser FWAE
-num = float >>= (return . Num . read)
+num :: Parser SFWAE
+num = float >>= (return . SNum . read)
 
-add :: Parser FWAE
+
+-- Operators
+
+add :: Parser SFWAE
 add = do
   char '+'
-  e1 <- expression
-  Add e1 <$> expression
+  exps <- many1 expression
+  return $ SOp Add exps
 
-sub :: Parser FWAE
+sub :: Parser SFWAE
 sub = do
   char '-'
-  e1 <- expression
-  Sub e1 <$> expression
+  exps <- many1 expression
+  return $ SOp Sub exps
 
-with :: Parser FWAE
+mul :: Parser SFWAE
+mul = do
+  char '*'
+  exps <- many1 expression
+  return $ SOp Mul exps
+
+divOp :: Parser SFWAE
+divOp = do
+  char '/'
+  exps <- many1 expression
+  return $ SOp Div exps
+
+modOp :: Parser SFWAE
+modOp = do
+  string "modulo"
+  e1 <- expression
+  e2 <- expression
+  return $ SOp Mod [e1, e2]
+
+expt :: Parser SFWAE
+expt = do
+  string "expt"
+  e1 <- expression
+  e2 <- expression
+  return $ SOp Expt [e1, e2]
+
+add1 :: Parser SFWAE
+add1 = do
+  string "add1"
+  e1 <- expression
+  return $ SOp Add1 [e1]
+
+sub1 :: Parser SFWAE
+sub1 = do
+  string "sub1"
+  e1 <- expression
+  return $ SOp Sub1 [e1]
+
+
+-- With/Functions Expressions
+
+with :: Parser SFWAE
 with = try $ do
   string "with"
   spaces
-  (wvar, wval) <- parenthesis bind
+  bindings <- parenthesis $ many1 bind
   spaces
-  With wvar wval <$> expression
+  wbody <- expression
+  return $ SWith bindings wbody
 
-bind :: Parser (String, FWAE)
+withM :: Parser SFWAE
+withM = try $ do
+  string "with*"
+  spaces
+  bindings <- parenthesis $ many1 bind
+  spaces
+  wbody <- expression
+  return $ SMWith bindings wbody
+
+bind :: Parser SBinding
 bind = do
-  wvar <- word
+  char '{'
+  spaces
+  wvar <- many1 letter
   spaces
   wval <- expression
-  return (wvar, wval)
+  spaces
+  char '}'
+  return $ (wvar, wval)
 
-fun :: Parser FWAE
+fun :: Parser SFWAE
 fun = try $ do
   string "fun"
   spaces
-  fparam <- parenthesis word
+  fparams <- parenthesis $ many1 word
   spaces
-  Fun fparam <$> expression
+  SFun fparams <$> expression
 
-app :: Parser FWAE
+app :: Parser SFWAE
 app = do
-  e1 <- expression
+  e <- expression
   spaces
-  App e1 <$> expression
+  es <- many1 expression
+  return $ SApp e es
+
+-- Utils
 
 parenthesis :: Parser a -> Parser a
 parenthesis p = do
@@ -77,18 +137,25 @@ parenthesis p = do
   char '}'
   return e
 
-expression :: Parser FWAE
+word :: Parser String
+word = many1 letter
+
+
+-- Program
+
+expression :: Parser SFWAE
 expression = spaces *> expressions <* spaces
   where expressions = parenthesis recursiveExpression <|> num <|> idVar
 
-recursiveExpression :: Parser FWAE
-recursiveExpression = add <|> sub <|> with <|> fun <|> app
+recursiveExpression :: Parser SFWAE
+recursiveExpression = operators <|> with <|> fun <|> app
+  where operators = add <|> sub <|> mul <|> divOp <|> modOp <|> expt <|> add1 <|> sub1
 
-fwaeProgram :: Parser FWAE
+fwaeProgram :: Parser SFWAE
 fwaeProgram = do
   e <- expression
   eof
   return e
 
-parse :: String -> Either ParseError FWAE
+parse :: String -> Either ParseError SFWAE
 parse = P.parse fwaeProgram ""

@@ -5,7 +5,7 @@ import FWAE.Parser
 import FWAE.Interpreter
 
 program :: String
-program = "{with {x 3} {with {f {fun {y} {+ x y}}} {with {x 5} {f 4}}}}"
+program = "{with {{x 3}} {with {{f {fun {y} {+ x y}}}} {with {{x 5}} {f 4}}}}"
 
 runProgram = do
   code <- parse program
