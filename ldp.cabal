@@ -29,6 +29,10 @@ library
       AE.Definitions
       AE.Interpreter
       AE.Parser
+      CFWAE
+      CFWAE.Definitions
+      CFWAE.Interpreter
+      CFWAE.Parser
       FWAE
       FWAE.Definitions
       FWAE.Interpreter
