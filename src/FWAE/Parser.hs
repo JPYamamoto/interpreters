@@ -148,7 +148,7 @@ expression = spaces *> expressions <* spaces
   where expressions = parenthesis recursiveExpression <|> num <|> idVar
 
 recursiveExpression :: Parser SFWAE
-recursiveExpression = operators <|> with <|> fun <|> app
+recursiveExpression = operators <|> with <|> withM <|> fun <|> app
   where operators = add <|> sub <|> mul <|> divOp <|> modOp <|> expt <|> add1 <|> sub1
 
 fwaeProgram :: Parser SFWAE

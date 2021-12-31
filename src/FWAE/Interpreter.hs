@@ -1,4 +1,4 @@
-module FWAE.Interpreter (interp, desugar) where
+module FWAE.Interpreter (interp) where
 
 import FWAE.Definitions
 
