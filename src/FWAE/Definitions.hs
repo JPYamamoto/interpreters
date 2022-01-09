@@ -6,7 +6,7 @@ import Data.Either
 -- Static Scope
 type FAEResult = Either Closure Number
 type Env = [(String, FAEResult)]
-data Closure = Closure {cparam :: String, cbody :: FWAE, cenv :: Env}
+data Closure = Closure {cparam :: String, cbody :: FWAE, cenv :: Env} deriving Eq
 
 instance Show Closure where
   show (Closure p b _) = show $ Fun p b
@@ -14,7 +14,7 @@ instance Show Closure where
 type Number = Double
 
 -- Operators
-data ArithOp = Add | Sub | Mul | Div | Mod | Expt | Add1 | Sub1
+data ArithOp = Add | Sub | Mul | Div | Mod | Expt | Add1 | Sub1 deriving Eq
 
 instance Show ArithOp where
   show Add  = "+"
@@ -50,12 +50,14 @@ data SFWAE = SID    {sIDName :: String}
            | SMWith {sMWithBindings :: [SBinding], sMWithBody :: SFWAE}
            | SFun   {sFunParams :: [String], sFunBody :: SFWAE}
            | SApp   {sAppLeft :: SFWAE, sAppRight :: [SFWAE]}
+           deriving Eq
 
 data FWAE = ID    {idName :: String}
           | Num   {numValue :: Number}
           | Op    {opOperator :: ArithOp, opExprs :: [FWAE]}
           | Fun   {funParam :: String, funBody :: FWAE}
           | App   {appExpr :: FWAE, appArg :: FWAE}
+          deriving Eq
 
 instance Show SFWAE where
   show (SID v)        = v

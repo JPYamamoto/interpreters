@@ -1,17 +1,8 @@
 module AE where
 
-import AE.Definitions
 import AE.Parser
 import AE.Interpreter
+import Language (languageInterpreter)
 
-program :: String
-program = "{+ {- 18 35} {+ 17 29}}"
 
-runProgram = do
-  code <- parse program
-  return $ interp code
-
-test = do
-  putStrLn "Interpreting the AE program:"
-  putStrLn program
-  print runProgram
+interpreter = languageInterpreter parse (return . interp)

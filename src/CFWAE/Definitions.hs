@@ -7,8 +7,8 @@ import Data.Either
 type Env = [(String, Value)]
 data Value = VNum  {vnumValue :: Number}
            | VBool {vboolValue :: Bool}
-           | VClosure {vclosureValue :: Closure}
-data Closure = Closure {cparam :: String, cbody :: CFWAE, cenv :: Env}
+           | VClosure {vclosureValue :: Closure} deriving Eq
+data Closure = Closure {cparam :: String, cbody :: CFWAE, cenv :: Env} deriving Eq
 
 isVNum :: Value -> Bool
 isVNum (VNum _) = True
@@ -29,11 +29,11 @@ instance Show Closure where
 type Number = Double
 
 -- Operators
-data ArithOp = Add | Sub | Mul | Div | Mod | Expt | Add1 | Sub1
-data RelationalOp = LessT | LessEqT | Equal | GreatT | GreatEqT | IsZero
-data LogicalOp  =  Not | And | Or
+data ArithOp = Add | Sub | Mul | Div | Mod | Expt | Add1 | Sub1 deriving Eq
+data RelationalOp = LessT | LessEqT | Equal | GreatT | GreatEqT | IsZero deriving Eq
+data LogicalOp  =  Not | And | Or deriving Eq
 
-data Operator = Arithmetic ArithOp | Relational RelationalOp | Logical LogicalOp
+data Operator = Arithmetic ArithOp | Relational RelationalOp | Logical LogicalOp deriving Eq
 
 instance Show ArithOp where
   show Add  = "+"
@@ -94,7 +94,7 @@ type BaseBinding a = (String, a)
 type SBinding = BaseBinding SCFWAE
 type Binding = BaseBinding CFWAE
 
-data Condition = Case {caseTest :: SCFWAE, caseThen :: SCFWAE}
+data Condition = Case {caseTest :: SCFWAE, caseThen :: SCFWAE} deriving Eq
 
 -- Version with syntactic sugar
 data SCFWAE = SID    {sIDName :: String}
@@ -107,6 +107,7 @@ data SCFWAE = SID    {sIDName :: String}
             | SMWith {sMWithBindings :: [SBinding], sMWithBody :: SCFWAE}
             | SFun   {sFunParams :: [String], sFunBody :: SCFWAE}
             | SApp   {sAppLeft :: SCFWAE, sAppRight :: [SCFWAE]}
+           deriving Eq
 
 data CFWAE = ID    {idName :: String}
            | Num   {numValue :: Number}
@@ -115,6 +116,7 @@ data CFWAE = ID    {idName :: String}
            | If    {ifTest :: CFWAE, ifThen :: CFWAE, ifElse :: CFWAE}
            | Fun   {funParam :: String, funBody :: CFWAE}
            | App   {appExpr :: CFWAE, appArg :: CFWAE}
+           deriving Eq
 
 instance Show SCFWAE where
   show (SID v)       = v

@@ -37,6 +37,7 @@ library
       FWAE.Definitions
       FWAE.Interpreter
       FWAE.Parser
+      Language
       WAE
       WAE.Definitions
       WAE.Interpreter
@@ -67,12 +68,17 @@ test-suite ldp-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      SpecAE
+      SpecCFWAE
+      SpecFWAE
+      SpecWAE
       Paths_ldp
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      HUnit
+    , base >=4.7 && <5
     , ldp
     , parsec >=3.1
   default-language: Haskell2010
