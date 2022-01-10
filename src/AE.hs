@@ -2,7 +2,7 @@ module AE where
 
 import AE.Parser
 import AE.Interpreter
-import Language (languageInterpreter)
+import Language (buildInterpreter)
 
 
-interpreter = languageInterpreter parse (return . interp)
+interpreter = buildInterpreter parse (return . interp)

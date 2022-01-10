@@ -33,6 +33,7 @@ library
       CFWAE.Definitions
       CFWAE.Interpreter
       CFWAE.Parser
+      CLI
       FWAE
       FWAE.Definitions
       FWAE.Interpreter
@@ -51,12 +52,51 @@ library
     , parsec >=3.1
   default-language: Haskell2010
 
-executable ldp-exe
+executable ldp-ae
   main-is: Main.hs
   other-modules:
       Paths_ldp
   hs-source-dirs:
-      app
+      app/AE
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , ldp
+    , parsec >=3.1
+  default-language: Haskell2010
+
+executable ldp-cfwae
+  main-is: Main.hs
+  other-modules:
+      Paths_ldp
+  hs-source-dirs:
+      app/CFWAE
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , ldp
+    , parsec >=3.1
+  default-language: Haskell2010
+
+executable ldp-fwae
+  main-is: Main.hs
+  other-modules:
+      Paths_ldp
+  hs-source-dirs:
+      app/FWAE
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , ldp
+    , parsec >=3.1
+  default-language: Haskell2010
+
+executable ldp-wae
+  main-is: Main.hs
+  other-modules:
+      Paths_ldp
+  hs-source-dirs:
+      app/WAE
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5

@@ -2,7 +2,7 @@ module WAE where
 
 import WAE.Parser
 import WAE.Interpreter
-import Language (languageInterpreter)
+import Language (buildInterpreter)
 
 
-interpreter = languageInterpreter parse (return . interp)
+interpreter = buildInterpreter parse (return . interp)

@@ -2,7 +2,7 @@ module FWAE where
 
 import FWAE.Parser
 import FWAE.Interpreter
-import Language (languageInterpreter)
+import Language (buildInterpreter)
 
 
-interpreter = languageInterpreter parse interp
+interpreter = buildInterpreter parse interp

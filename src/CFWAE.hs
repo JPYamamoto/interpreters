@@ -2,6 +2,7 @@ module CFWAE where
 
 import CFWAE.Parser
 import CFWAE.Interpreter
-import Language (languageInterpreter)
+import Language (buildInterpreter)
 
-interpreter = languageInterpreter parse interp
+
+interpreter = buildInterpreter parse interp

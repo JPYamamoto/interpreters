@@ -1,7 +1,10 @@
-module Language (languageInterpreter) where
+module Language ( buildInterpreter
+                , Interpreter) where
 
 import Control.Monad ((>=>))
 import Text.Parsec.Error (ParseError)
 
-languageInterpreter :: (String -> Either ParseError c) -> (c -> Maybe v) -> (String -> Either ParseError (Maybe v))
-languageInterpreter parser interpreter = parser >=> (return . interpreter)
+type Interpreter v = String -> Either ParseError (Maybe v)
+
+buildInterpreter :: (String -> Either ParseError c) -> (c -> Maybe v) -> Interpreter v
+buildInterpreter parser interpreter = parser >=> (return . interpreter)
