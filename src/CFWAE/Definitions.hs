@@ -126,7 +126,7 @@ instance Show SCFWAE where
   show (SIf c t e)       = "{if " ++ show c ++ " " ++ show t ++ " " ++ show e ++ "}"
   show (SCond cs e)      = "{cond " ++ casesShow cs ++ " " ++ show e ++ "}"
   show (SWith bs wBody)  = concat ["{with {", bindsShow bs, "} ", show wBody, "}"]
-  show (SMWith bs wBody) = concat ["{with {", bindsShow bs, "} ", show wBody, "}"]
+  show (SMWith bs wBody) = concat ["{with* {", bindsShow bs, "} ", show wBody, "}"]
   show (SFun ps e)    = concat ["{fun {", unwords ps, "} ", show e, "}"]
   show (SApp e args)  = concat ["{", expressions, "}"]
     where expressions = unwords $ show e : map show args

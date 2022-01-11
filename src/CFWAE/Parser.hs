@@ -152,14 +152,18 @@ orOp = do
 condition :: Parser SCFWAE
 condition = try $ do
   string "cond"
-  cases <- many1 $ parenthesis conditionCase
-  elseExpr <- parenthesis expression
-  return $ SCond cases elseExpr
+  spaces
+  cases <- sepEndBy1 (parenthesis conditionCase) spaces
+  if caseTest (last cases) /= SID "else"
+    then fail "Missing else in condition."
+    else return $ SCond (init cases) (caseThen $ last cases)
 
 conditionCase :: Parser Condition
-conditionCase = do
+conditionCase = try $ do
   testExpr <- expression
+  spaces
   thenExpr <- expression
+  spaces
   return $ Case testExpr thenExpr
 
 ifParse :: Parser SCFWAE
@@ -239,7 +243,7 @@ recursiveExpression :: Parser SCFWAE
 recursiveExpression = operators <|> condition <|> ifParse <|> with <|> withM <|> fun <|> app
 
 operators :: Parser SCFWAE
-operators = choice . map (try) $ arithOp ++ relationalOp ++ logicalOp
+operators = choice . map try $ arithOp ++ relationalOp ++ logicalOp
   where arithOp = [add, sub, mul, divOp, modOp, expt, add1, sub1]
         relationalOp = [lessTOp, lessEqTOp, eqOp, greatTOp, greatEqTOp, isZeroOp]
         logicalOp = [notOp, andOp, orOp]
@@ -251,4 +255,5 @@ fwaeProgram = do
   return e
 
 parse :: String -> Either ParseError SCFWAE
-parse = P.parse fwaeProgram ""
+parse s = P.parse fwaeProgram "" cleanS
+  where cleanS = map (\c -> if c == '\n' then ' ' else c) s

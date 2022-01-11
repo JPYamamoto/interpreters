@@ -52,7 +52,7 @@ library
     , parsec >=3.1
   default-language: Haskell2010
 
-executable ldp-ae
+executable ae
   main-is: Main.hs
   other-modules:
       Paths_ldp
@@ -65,7 +65,7 @@ executable ldp-ae
     , parsec >=3.1
   default-language: Haskell2010
 
-executable ldp-cfwae
+executable cfwae
   main-is: Main.hs
   other-modules:
       Paths_ldp
@@ -78,7 +78,7 @@ executable ldp-cfwae
     , parsec >=3.1
   default-language: Haskell2010
 
-executable ldp-fwae
+executable fwae
   main-is: Main.hs
   other-modules:
       Paths_ldp
@@ -91,7 +91,7 @@ executable ldp-fwae
     , parsec >=3.1
   default-language: Haskell2010
 
-executable ldp-wae
+executable wae
   main-is: Main.hs
   other-modules:
       Paths_ldp

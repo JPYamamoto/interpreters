@@ -1,0 +1,45 @@
+{with* {
+    {toBool {fun {c} {{c true} false}}}
+    {const {fun {x y} x}}
+    {par {fun {x y} y}}
+    {pair {fun {x y f} {{f x} y}}}
+    {first {fun {p} {p const}}}
+    {second {fun {p} {p par}}}
+    {cons {fun {h t} {fun {s} {{s h} t}}}}
+    {head {fun {l} {l const}}}
+    {tail {fun {l} {l par}}}
+    {nil {fun {x} const}}
+    {isEmpty {fun {l} {toBool {l {fun {h t} par}}}}}
+    {Num 1}
+    {Sum 2}
+    {Sub 3}
+    {Mul 4}
+    {Div 5}
+    {num {fun {n} {pair Num n}}}
+    {sum {fun {l} {pair Sum l}}}
+    {sub {fun {l} {pair Sub l}}}
+    {mul {fun {l} {pair Mul l}}}
+    {div {fun {l} {pair Div l}}}
+    {isNum {fun {p} {= {first p} Num}}}
+    {isSum {fun {p} {= {first p} Sum}}}
+    {isSub {fun {p} {= {first p} Sub}}}
+    {isMul {fun {p} {= {first p} Mul}}}
+    {isDiv {fun {p} {= {first p} Div}}}
+    {Z {fun {g} {{fun {x} {g {fun {v} {x x v}}}} {fun {x} {g {fun {v} {x x v}}}}}}}
+    {foldr {Z {fun {rec f z l} {if {isEmpty l} z {f {head l} {rec f z {tail l}}}}}}}
+    {foldl {Z {fun {rec f z l} {if {isEmpty l} z {rec f {f z {head l}} {tail l}}}}}}
+    {map {fun {f l} {foldr {fun {y ys} {cons {f y} ys}} nil l}}}
+    {opSum {fun {l} {foldl {fun {x y} {+ x y}} 0 l}}}
+    {opSub {fun {l} {foldl {fun {x y} {- x y}} {head l} {tail l}}}}
+    {opMul {fun {l} {foldl {fun {x y} {* x y}} 1 l}}}
+    {opDiv {fun {l} {foldl {fun {x y} {/ x y}} {head l} {tail l}}}}
+    {interp {Z {fun {rec e} {cond
+        {{isNum e} {second e}}
+        {{isSum e} {opSum {map {fun {p} {rec p}} {second e}}}}
+        {{isSub e} {opSub {map {fun {p} {rec p}} {second e}}}}
+        {{isMul e} {opMul {map {fun {p} {rec p}} {second e}}}}
+        {{isDiv e} {opDiv {map {fun {p} {rec p}} {second e}}}}
+        {else {+ 1 false}}
+    }}}}
+    {ast {sum {cons {num 10} {cons {div {cons {num 4} {cons {num 2} nil}}} nil}}}}}
+{interp ast}}
